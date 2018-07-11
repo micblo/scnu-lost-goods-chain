@@ -1,0 +1,106 @@
+/*
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+/**
+ * SCNU LOST GOODS business network definition.
+ */
+namespace cn.edu.scnu.lost
+
+enum GoodsType {
+  o STUDENT_ECARD
+  o STUDENT_ID_CARD
+  o TRANSPORT_PASS
+  o MOBILE_PHONE
+  o KEY_PAIRS
+  o OTHERS
+}
+
+enum GoodsState {
+  o LOST
+  o FOUND
+  o REVERTED
+  o RETURNED
+  o CANCELED
+}
+
+
+asset GoodsAsset identified by goodsId {
+  o String goodsId
+  --> SchoolParticipant owner
+  --> SchoolParticipant picker optional
+  o GoodsState state default = 'LOST'
+  o GoodsType type
+  o String subject optional
+  o String description optional
+  o DateTime createAt
+  o DateTime foundAt optional
+  o DateTime retivedAt optional
+  o DateTime finishAt optional
+}
+
+participant SchoolParticipant identified by cardId {
+  o String cardId
+  o String name
+  o String department
+}
+
+//
+// Transactions
+//
+transaction CreateLostTransaction {
+  o String goodsId
+  o GoodsType type
+  o String subject optional
+  o String description optional
+}
+
+transaction PickTransaction {
+  --> GoodsAsset asset
+}
+
+transaction RevertTransaction {
+  --> GoodsAsset asset
+}
+
+transaction ReturnBackTransaction {
+  --> GoodsAsset asset
+}
+
+transaction CancelTransaction {
+  --> GoodsAsset asset
+}
+
+//
+// Events
+//
+event GoodsLostEvent {
+  --> GoodsAsset asset
+}
+
+event GoodsFoundEvent {
+  --> GoodsAsset asset
+  --> SchoolParticipant picker
+}
+  
+event GoodsRevertedEvent {
+  --> GoodsAsset asset
+}
+  
+event GoodsReturnEvent {
+  --> GoodsAsset asset
+}
+  
+event GoodsCancelEvent {
+  --> GoodsAsset asset
+}
