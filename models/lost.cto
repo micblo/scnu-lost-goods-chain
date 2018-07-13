@@ -116,6 +116,7 @@ transaction PickGoodsTransaction {
 
 transaction RevertGoodsTransaction {
   --> GoodsAsset asset
+  --> Person picker optional
   o String revertedPlace
 }
 
@@ -160,4 +161,12 @@ event GoodsCancelEvent {
 
 event WalletInitEvent {
   o String userId
+}
+
+event WalletCoinChangeEvent {
+  o Integer formerCoin
+  o Integer increment
+  o Integer nowCoin
+  o String userId
+  o String reason
 }

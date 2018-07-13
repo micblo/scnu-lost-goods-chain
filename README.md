@@ -16,15 +16,17 @@ This business network defines:
 - `SubmitFoundGoodsTransaction`: I found something, submit and write it to blockchain;
 - `SubmitLostGoodsTransaction`: Someone revert lost goods, submit and write it to blockchain;
 - `PickTransaction`: Someone picked your lost goods and tell everyone I found it;
-- `RevertTransaction`: Picker reverts the lost goods to STUU;
-- `ReturnBackTransaction`: Lost goods are returned back to its owner;
-- `CancelTransaction`: Owner cancel to find his goods.
+- `RevertTransaction`: Picker reverts the lost goods to STUU and reward picker (if exists) 10 coins;
+- `ReturnBackTransaction`: Lost goods are returned back to its owner and reward picker (if exists) 90 coins;
+- `CancelTransaction`: Owner cancel to find his goods;
+- `InitWalletTransaction`: Owner init his wallet when registering.
 
 > Read `lost.cto` to know structure of transactions
 
 **Event**
 `GoodsLostEvent`, `GoodsFoundEvent`, `GoodsRevertedEvent`, 
-`GoodsReturnEvent`, `GoodsCancelEvent`
+`GoodsReturnEvent`, `GoodsCancelEvent`, `WalletInitEvent`, 
+`WalletCoinChangeEvent`
 
 ## Test
 
