@@ -3,7 +3,7 @@
     "composer": "^0.19.0"
   },
   "name": "scnu-lost-goods-chain",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "千与千寻 区块链寻找你失去的物品……",
   "networkImage": "https://hyperledger.github.io/composer-sample-networks/packages/basic-sample-network/networkimage.svg",
   "networkImageanimated": "https://hyperledger.github.io/composer-sample-networks/packages/basic-sample-network/networkimageanimated.svg",

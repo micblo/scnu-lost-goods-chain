@@ -17,12 +17,17 @@
  */
 namespace cn.edu.scnu.lost
 
+import cn.edu.scnu.Person
+
 enum GoodsType {
-  o STUDENT_ECARD
+  o SCNU_ECARD
+  o GZ_UNITOWN_ECARD
   o STUDENT_ID_CARD
   o TRANSPORT_PASS
   o MOBILE_PHONE
-  o KEY_PAIRS
+  o BICYCLE
+  o LAPTOP
+  o KEY_PAIR
   o OTHERS
 }
 
@@ -34,73 +39,109 @@ enum GoodsState {
   o CANCELED
 }
 
+enum AdminRole {
+  o SUPER_ADMIN
+  o ADMIN
+  o ASSISTANT
+}
 
+/*
+ * Participants
+ */
+participant SystemAdmin identified by personId {
+  o String personId regex=/\d{8,11}/
+  o AdminRole role
+}
+
+/*
+ * Assets
+ */
 asset GoodsAsset identified by goodsId {
   o String goodsId
-  --> SchoolParticipant owner
-  --> SchoolParticipant picker optional
+  --> Person owner optional
+  --> Person picker optional
+  --> SystemAdmin receiver optional
   o GoodsState state default = 'LOST'
   o GoodsType type
   o String subject optional
   o String description optional
+  o String canceledReason optional
   o DateTime createAt
   o DateTime foundAt optional
   o DateTime retivedAt optional
   o DateTime finishAt optional
 }
 
-participant SchoolParticipant identified by cardId {
-  o String cardId
-  o String name
-  o String department
-}
-
-//
-// Transactions
-//
-transaction CreateLostTransaction {
+/*
+ * Transactions
+ */
+transaction SubmitLostGoodsTransaction {
   o String goodsId
   o GoodsType type
+  --> Person owner optional
   o String subject optional
   o String description optional
 }
 
-transaction PickTransaction {
+transaction SubmitFoundGoodsTransaction {
+  o String goodsId
+  o GoodsType type
+  --> Person owner optional
+  o String subject optional
+  o String description optional
+}
+
+transaction SubmitRevertedGoodsTransaction {
+  o String goodsId
+  o GoodsType type
+  --> Person picker optional
+  --> Person owner optional
+  o String subject optional
+  o String description optional
+}
+
+transaction PickGoodsTransaction {
   --> GoodsAsset asset
 }
 
-transaction RevertTransaction {
+transaction RevertGoodsTransaction {
   --> GoodsAsset asset
 }
 
 transaction ReturnBackTransaction {
   --> GoodsAsset asset
+  --> Person owner optional
 }
 
 transaction CancelTransaction {
   --> GoodsAsset asset
+  o String reason
 }
 
-//
-// Events
-//
+/*
+ * Events
+ */
 event GoodsLostEvent {
   --> GoodsAsset asset
 }
 
 event GoodsFoundEvent {
   --> GoodsAsset asset
-  --> SchoolParticipant picker
+  --> Person picker optional
 }
   
 event GoodsRevertedEvent {
   --> GoodsAsset asset
+  --> Person picker optional
 }
   
 event GoodsReturnEvent {
   --> GoodsAsset asset
+  --> Person formerOwner optional
+  --> Person newOwner optional
 }
   
 event GoodsCancelEvent {
   --> GoodsAsset asset
+  o String reason
 }

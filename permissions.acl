@@ -16,98 +16,128 @@
  * Access control list.
  */
 rule EverybodyCanReadEverything {
-    description: "Allow all participants read access to all resources"
-    participant: "cn.edu.scnu.lost.SchoolParticipant"
-    operation: READ
-    resource: "cn.edu.scnu.lost.*"
-    action: ALLOW
+  description: "Allow Persons read access to all resources"
+  participant: "cn.edu.scnu.Person"
+  operation: READ
+  resource: "cn.edu.scnu.**"
+  action: ALLOW
 }
 
-rule EverybodyCanUpdate {
-    description: "Allow all participants to submit new transactions"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: UPDATE
-    resource(r): "cn.edu.scnu.lost.GoodsAsset"
-    transaction(tx): "cn.edu.scnu.lost.**"
-    condition: (r.state !== 'RETURNED')
-    action: ALLOW
+rule SystemAdminCanReadEverything {
+  description: "Allow SystemAdmin read access to all resources"
+  participant: "cn.edu.scnu.lost.SystemAdmin"
+  operation: READ
+  resource: "cn.edu.scnu.**"
+  action: ALLOW
 }
 
-rule CreateLostTransactionCanCreate {
-    description: "Allow all participants to submit new transactions"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.GoodsAsset"
-    transaction(tx): "cn.edu.scnu.lost.CreateLostTransaction"
-    condition: (true)
-    action: ALLOW
+rule SystemAdminCanDoEverything {
+  description: "Allow all participants read access to all resources"
+  participant: "cn.edu.scnu.lost.SystemAdmin"
+  operation: ALL
+  resource: "cn.edu.scnu.lost.**"
+  action: ALLOW
 }
 
-rule EverybodyCanSubmitTransactions {
-    description: "Allow all participants to submit new transactions"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.CreateLostTransaction"
-    condition: (true)
-    action: ALLOW
+rule EverybodyCanCreateAndUpdate {
+  description: "Allow all participants to crate and update unfinished transactions"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE,
+  UPDATE
+  resource(r): "cn.edu.scnu.lost.GoodsAsset"
+  transaction(tx): "cn.edu.scnu.lost.**"
+  // IF GOODS IS RETURNED OR CANCELED, IT CAN NOT BE UPDATE
+  condition: (r.state !== 'RETURNED' && r.state !== 'CANCELED')
+  action: ALLOW
 }
 
-rule PickerCanDeclareFoundTransaction {
-    description: "Only picker can declare goods is FOUND when goods is in LOST state"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.PickTransaction"
-    condition: (true)
-    action: ALLOW
+rule SubmitLostGoodsTransaction {
+  description: "Person who lost a goods submits it to find it"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.SubmitLostGoodsTransaction"
+  condition: (true)
+  action: ALLOW
+}
+
+rule SubmitFoundGoodsTransaction {
+  description: "Person who found a goods submits it to find its owner"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.SubmitFoundGoodsTransaction"
+  condition: (true)
+  action: ALLOW
+}
+
+rule SubmitRevertedGoodsTransaction {
+  description: "Only system Admin submit lost goods infomation when someone retived it"
+  participant(p): "cn.edu.scnu.lost.SystemAdmin"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.SubmitRevertedGoodsTransaction"
+  condition: (true)
+  action: ALLOW
+}
+
+rule PickerFoundTransaction {
+  description: "Only picker can find goods when goods is in LOST state"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.PickGoodsTransaction"
+  condition: (true)
+  action: ALLOW
 }
 
 rule OwnerCanDoCancelTransaction {
-    description: "Only owner can cancel when goods is in LOST state"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.CancelTransaction"
-    condition: (r.asset.owner.getIdentifier() === p.getIdentifier())
-    action: ALLOW
+  description: "Only owner can cancel when goods is in LOST state"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.CancelTransaction"
+  condition: (r.asset.owner.getIdentifier() === p.getIdentifier())
+  action: ALLOW
 }
 
 rule PickerRevertTransaction {
-    description: "Only picker can revert goods when goods is in FOUND state"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.RevertTransaction"
-    condition: (r.asset.picker.getIdentifier() === p.getIdentifier())
-    action: ALLOW
+  description: "Only picker can revert goods when goods is in FOUND state"
+  participant(p): "cn.edu.scnu.lost.SystemAdmin"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.RevertGoodsTransaction"
+  condition: (true)
+  action: ALLOW
 }
 
 rule OwnerCanReturnedTransaction {
-    description: "Only picker can revert goods when goods is in REVERTED state"
-    participant(p): "cn.edu.scnu.lost.SchoolParticipant"
-    operation: CREATE
-    resource(r): "cn.edu.scnu.lost.ReturnBackTransaction"
-    condition: (r.asset.owner.getIdentifier() === p.getIdentifier())
-    action: ALLOW
+  description: "Only picker can revert goods when goods is in REVERTED state"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.ReturnBackTransaction"
+  condition: (r.asset.owner.getIdentifier() === p.getIdentifier())
+  action: ALLOW
 }
 
+/*
+   Blockchain System Admin
+*/
+
 rule SystemACL {
-    description: "System ACL to permit all access"
-    participant: "org.hyperledger.composer.system.Participant"
-    operation: ALL
-    resource: "org.hyperledger.composer.system.**"
-    action: ALLOW
+  description: "System ACL to permit all access"
+  participant: "org.hyperledger.composer.system.Participant"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
 }
 
 rule NetworkAdminUser {
-    description: "Grant business network administrators full access to user resources"
-    participant: "org.hyperledger.composer.system.NetworkAdmin"
-    operation: ALL
-    resource: "**"
-    action: ALLOW
+  description: "Grant business network administrators full access to user resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "**"
+  action: ALLOW
 }
 
 rule NetworkAdminSystem {
-    description: "Grant business network administrators full access to system resources"
-    participant: "org.hyperledger.composer.system.NetworkAdmin"
-    operation: ALL
-    resource: "org.hyperledger.composer.system.**"
-    action: ALLOW
+  description: "Grant business network administrators full access to system resources"
+  participant: "org.hyperledger.composer.system.NetworkAdmin"
+  operation: ALL
+  resource: "org.hyperledger.composer.system.**"
+  action: ALLOW
 }
