@@ -39,11 +39,33 @@ rule SystemAdminCanDoEverything {
   action: ALLOW
 }
 
+//
+// WALLET
+rule EverybodyCanCreateAndUpdateHisWallet {
+  description: "Allow everybody crate and update his own wallet"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE, UPDATE
+  resource(r): "cn.edu.scnu.lost.WalletAsset"
+  transaction(tx): "cn.edu.scnu.lost.**"
+  condition: (p.getIdentifier() === r.getIdentifier())
+  action: ALLOW
+}
+
+rule InitWalletTransaction {
+  description: "Person init wallet for coin"
+  participant(p): "cn.edu.scnu.Person"
+  operation: CREATE
+  resource(r): "cn.edu.scnu.lost.InitWalletTransaction"
+  condition: (true)
+  action: ALLOW
+}
+
+//
+// GOODS
 rule EverybodyCanCreateAndUpdate {
   description: "Allow all participants to crate and update unfinished transactions"
   participant(p): "cn.edu.scnu.Person"
-  operation: CREATE,
-  UPDATE
+  operation: CREATE, UPDATE
   resource(r): "cn.edu.scnu.lost.GoodsAsset"
   transaction(tx): "cn.edu.scnu.lost.**"
   // IF GOODS IS RETURNED OR CANCELED, IT CAN NOT BE UPDATE

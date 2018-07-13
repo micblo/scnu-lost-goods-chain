@@ -74,9 +74,16 @@ asset GoodsAsset identified by goodsId {
   o DateTime finishAt optional
 }
 
+asset WalletAsset identified by userId {
+  o String userId
+  o Integer coin default = 0
+}
+
 /*
  * Transactions
  */
+transaction InitWalletTransaction {}
+
 transaction SubmitLostGoodsTransaction {
   o String goodsId
   o GoodsType type
@@ -149,4 +156,8 @@ event GoodsReturnEvent {
 event GoodsCancelEvent {
   --> GoodsAsset asset
   o String reason
+}
+
+event WalletInitEvent {
+  o String userId
 }

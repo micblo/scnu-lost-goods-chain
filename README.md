@@ -8,7 +8,7 @@ This business network defines:
 `Person`, `SystemAdmin`
 
 **Asset**
-`GoodsAsset`
+`GoodsAsset`, `WalletAsset`
 
 **Transaction**
 
@@ -98,6 +98,14 @@ ONLY SystemAdmin CAN DO REVERTING and RETURNING transactions.
 | foundAt     | DateTime | optional | None  | Time of goods is found     |
 | revertedAt   | DateTime | optional | None  | Time of goods is reverted |
 | finishAt    | DateTime | optional | None  | Time of goods is canceled or returned |
+
+
+### `cn.edu.scnu.lost.WalletAsset`
+
+| Fields Name |   Type  |          | Default |         Description        |
+|-------------|:-------:|:--------:|:-------:|----------------------------|
+| userId      | String  | required |   None  | User ID of wallet          |
+| coin        | Integer | required |    0    | Coin count of wallet       |
 
 
 ## Enumerations
