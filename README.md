@@ -92,9 +92,11 @@ ONLY SystemAdmin CAN DO REVERTING and RETURNING transactions.
 | subject     | String | optional |   None  | Name of this goods         |
 | description | String | optional |   None  | More detial of goods       |
 | canceledReason | String | optional | None | Reason why owner canceled  |
+| revertedPlace  | String | optional | None  | Place where goods was reverted |
+| returnedPlace | String | optional | None  | Place where goods was returned |
 | createAt    | DateTime | required | None  | Time of goods is submitted |
 | foundAt     | DateTime | optional | None  | Time of goods is found     |
-| retivedAt   | DateTime | optional | None  | Time of goods is retived   |
+| revertedAt   | DateTime | optional | None  | Time of goods is reverted |
 | finishAt    | DateTime | optional | None  | Time of goods is canceled or returned |
 
 
