@@ -82,7 +82,7 @@ ONLY SystemAdmin CAN DO REVERTING and RETURNING transactions.
 ### `cn.edu.scnu.lost.GoodsAsset`
 
 | Fields Name |  Type  |          | Default |         Description        |
-|-------------|:------:|:--------:|:-------:|---------------------------:|
+|-------------|:------:|:--------:|:-------:|----------------------------|
 | goodsId     | String | required |   None  | ID of goods                |
 | owner       | Person | optional |   None  | Owner of goods             |
 | picker      | Person | optional |   None  | Who pick this goods        |
