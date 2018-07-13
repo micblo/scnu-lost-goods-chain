@@ -5,7 +5,7 @@
 This business network defines:
 
 **Participant**
-`SchoolParticipant`
+`Person`, `SystemAdmin`
 
 **Asset**
 `GoodsAsset`
@@ -27,6 +27,9 @@ This business network defines:
 `GoodsReturnEvent`, `GoodsCancelEvent`
 
 ## Test
+
+This project can run in Hyperledger Composer Playground, 
+you can browse [composer-playground.mybluemix.net](https://composer-playground.mybluemix.net/) to test online demo. If you live in China Mainland, maybe you can not connect to this website but use proxy or VPN to bypass the firewall.
 
 To test this Business Network Definition in the **Test** tab:
 
@@ -55,28 +58,73 @@ After submitting this transaction, you should now see the transaction in the Tra
 
 Congratulations!
 
+## Participant
+
+### `Person`
+
+Namespace: `cn.edu.scnu`
+
+A normal user of university, including students, teachers, staffs and other people.
+
+Person CAN submit infomation of goods that he lost or found.
+If person give up, he can cancel and remove the information of his own lost goods.
+
+### `SystemAdmin`
+
+Namespace: `cn.edu.scnu.lost`
+
+A administator of SCNU-LOST-GOODS system, including super admin, admin and student assistants.
+
+ONLY SystemAdmin CAN DO REVERTING and RETURNING transactions.
+
+## Asset
+
+### `cn.edu.scnu.lost.GoodsAsset`
+
+| Fields Name |  Type  |          | Default |         Description        |
+|-------------|:------:|:--------:|:-------:|---------------------------:|
+| goodsId     | String | required |   None  | ID of goods                |
+| owner       | Person | optional |   None  | Owner of goods             |
+| picker      | Person | optional |   None  | Who pick this goods        |
+| receiver | SystemAdmin | optional | None  | Who goods reverted to      |
+| state   | GoodsState | required | 'LOST'  | Statement of goods         |
+| type      | GoodsType | required |  None  | Type of goods              |
+| subject     | String | optional |   None  | Name of this goods         |
+| description | String | optional |   None  | More detial of goods       |
+| canceledReason | String | optional | None | Reason why owner canceled  |
+| createAt    | DateTime | required | None  | Time of goods is submitted |
+| foundAt     | DateTime | optional | None  | Time of goods is found     |
+| retivedAt   | DateTime | optional | None  | Time of goods is retived   |
+| finishAt    | DateTime | optional | None  | Time of goods is canceled or returned |
+
+
 ## Enumerations
 
-### `GoodsType`
+### `cn.edu.scnu.lost.GoodsType`
 
-- `SCNU_ECARD`: 华师一卡通
-- `GZ_UNITOWN_ECARD`: 大学城一卡通
-- `STUDENT_ID_CARD`: 学生证
-- `TRANSPORT_PASS`: 交通卡
-- `MOBILE_PHONE`: 手机
-- `BICYCLE`: 自行车
-- `LAPTOP`: 笔记本电脑
-- `KEY_PAIR`: 钥匙
-- `OTHERS`: 其他
+- `SCNU_ECARD`: SCNU E-Card
+- `GZ_UNITOWN_ECARD`: Guangzhou university town E-Card
+- `STUDENT_ID_CARD`: Student ID Card
+- `TRANSPORT_PASS`: Transport pass, such as Yangchengtong
+- `MOBILE_PHONE`: Mobile phone
+- `BICYCLE`: Bicycle
+- `LAPTOP`: Laptop
+- `KEY_PAIR`: Key pair
+- `OTHERS`: Other goods
 
-### `GoodsState`
+### `cn.edu.scnu.lost.GoodsState`
 
-- `LOST`: 物品已丢失
-- `FOUND`: 物品已找回
-- `REVERTED`: 招领站已接收物品
-- `RETURNED`: 物品已归还失主
-- `CANCELED`: 失主取消失物登记
+- `LOST`: This goods is lost
+- `FOUND`: This goods is found but not reverted
+- `REVERTED`: This goods is reverted and stayed in STUU Station
+- `RETURNED`: This goods is returned to its owner
+- `CANCELED`: The owner canceled this order
 
+### `cn.edu.scnu.lost.AdminRole`
+
+- `SUPER_ADMIN`: Super admin of this system, such as teacher
+- `ADMIN`: Admin of this system, such as leader students
+- `ASSISTANT`: People who work in STUU Station and are in charge of reverting and returning
 
 ## License
 
